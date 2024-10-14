@@ -40,6 +40,7 @@ public enum InfoToggle implements IConfigInteger, IHotkeyTogglable
     SPEED_AXIS              ("infoSpeedAxis",               false, ""),
     SPEED_HV                ("infoSpeedHV",                 false, ""),
     SPRINTING               ("infoSprinting",               false, ""),
+    SCULK_WARNING_LEVEL     ("infoSculkWarningLevel",       false, ""),
 
     // Server
     SERVER_TPS              ("infoServerTPS",               false, ""),

@@ -300,6 +300,7 @@
     "minihud.config.info_toggle.name.infoSpeedAxis": "infoSpeedAxis",
     "minihud.config.info_toggle.name.infoSpeedHV": "infoSpeedHV",
     "minihud.config.info_toggle.name.infoSprinting": "infoSprinting",
+    "minihud.config.info_toggle.name.infoSculkWarningLevel": "infoSculkWarningLevel",
     "minihud.config.info_toggle.name.infoTileEntities": "infoTileEntities",
     "minihud.config.info_toggle.name.infoTimeDayModulo": "infoTimeDayModulo",
     "minihud.config.info_toggle.name.infoTimeIRL": "infoTimeIRL",
@@ -356,6 +357,7 @@
     "minihud.config.info_toggle.comment.infoSpeedAxis": "Show the player's current moving speed per axis",
     "minihud.config.info_toggle.comment.infoSpeedHV": "Show the player's current moving speed both horizontally and vertically.",
     "minihud.config.info_toggle.comment.infoSprinting": "Show the \"Sprinting\" info line if the player is sprinting",
+    "minihud.config.info_toggle.comment.infoSculkWarningLevel": "Show the \"Sculk Shrieker\" warning level info.",
     "minihud.config.info_toggle.comment.infoTileEntities": "Show the number of TileEntities in the client world",
     "minihud.config.info_toggle.comment.infoTimeDayModulo": "Show a modulo of the current day time.\nSee Generic configs for the divisor.",
     "minihud.config.info_toggle.comment.infoTimeIRL": "Show the current real time formatted according to dateFormatReal",
@@ -933,5 +935,6 @@
     "minihud.info_line.zombie_conversion": "%s conversion in: %s",
     "minihud.info_line.entity_reg_name": "Entity reg name: %s",
     "minihud.info_line.looking_at_block": "Looking at block: %d, %d, %d",
-    "minihud.info_line.looking_at_block_chunk": "Block: %d, %d, %d in Sub-Chunk: %d, %d, %d"
+    "minihud.info_line.looking_at_block_chunk": "Block: %d, %d, %d in Sub-Chunk: %d, %d, %d",
+    "minihud.info_line.warning_level": "Deep Dark Warning level: %d"
 }
