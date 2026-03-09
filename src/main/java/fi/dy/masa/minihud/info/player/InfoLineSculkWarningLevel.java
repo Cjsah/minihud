@@ -6,14 +6,22 @@ import fi.dy.masa.minihud.Reference;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.data.EntitiesDataManager;
 import fi.dy.masa.minihud.info.InfoLine;
+import fi.dy.masa.minihud.info.InfoLineChunkCache;
 import fi.dy.masa.minihud.info.InfoLineContext;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InfoLineSculkWarningLevel extends InfoLine
@@ -36,13 +44,40 @@ public class InfoLineSculkWarningLevel extends InfoLine
     @Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)
     {
-        if (ctx.world() == null) return null;
+        if (ctx.world() == null || ctx.ent() == null)
+        {
+            return null;
+        }
 
-        return ctx.ent() != null ? this.parseEnt(ctx.world(), ctx.ent()) : null;
+        List<Entry> list = new ArrayList<>();
+
+        int warningLevel = this.getEntWarningLevel(ctx.world(), ctx.ent());
+
+        if (warningLevel < 0) return null;
+
+        boolean inDeepDarkChunk = false;
+
+        if (ctx.chunkPos() != null && ctx.pos() != null)
+        {
+            LevelChunk clientChunk = InfoLineChunkCache.INSTANCE.getClientChunk(ctx.chunkPos());
+
+            if (!clientChunk.isEmpty())
+            {
+                Biome biome = this.mc().level.getBiome(ctx.pos()).value();
+                Identifier id = this.mc().level.registryAccess().lookupOrThrow(Registries.BIOME).getKey(biome);
+                inDeepDarkChunk = Biomes.DEEP_DARK.identifier().equals(id);
+            }
+        }
+
+        if (warningLevel > 0 || inDeepDarkChunk)
+        {
+            list.add(this.generateEntry(warningLevel));
+        }
+
+        return list;
     }
 
-    @Override
-    public List<Entry> parseEnt(@NotNull Level world, @NotNull Entity ent)
+    private int getEntWarningLevel(@NotNull Level world, @NotNull Entity ent)
     {
         if (world instanceof ServerLevel serverLevel)
         {
@@ -50,14 +85,14 @@ public class InfoLineSculkWarningLevel extends InfoLine
 
             if (players.isEmpty())
             {
-                return null;
+                return -1;
             }
-            
+
             return players
                 .getFirst()
                 .getWardenSpawnTracker()
-                .map(it -> this.generateEntry(it.getWarningLevel()))
-                .orElse(null);
+                .map(WardenSpawnTracker::getWarningLevel)
+                .orElse(-1);
         }
         else
         {
@@ -69,16 +104,15 @@ public class InfoLineSculkWarningLevel extends InfoLine
 
                 if (compound.contains("warden_spawn_tracker", Constants.NBT.TAG_COMPOUND))
                 {
-                    int warningLevel = compound.getCompound("warden_spawn_tracker").getInt("warning_level");
-                    return this.generateEntry(warningLevel);
+                    return compound.getCompound("warden_spawn_tracker").getInt("warning_level");
                 }
             }
         }
 
-		return null;
+        return -1;
     }
 
-    private List<Entry> generateEntry(int warningLevel)
+    private Entry generateEntry(int warningLevel)
     {
         char color = switch (warningLevel)
         {
@@ -88,7 +122,7 @@ public class InfoLineSculkWarningLevel extends InfoLine
             case 3, 4 -> 'c';
             default -> 'r';
         };
-        //noinspection DataFlowIssue
-        return List.of(this.translate(LEVEL_KEY, "§%s%s§r".formatted(color, warningLevel)));
+
+        return this.translate(LEVEL_KEY, "§%s%s§r".formatted(color, warningLevel));
     }
 }
