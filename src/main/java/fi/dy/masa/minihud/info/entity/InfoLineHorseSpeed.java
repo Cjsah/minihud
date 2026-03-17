@@ -16,6 +16,7 @@ import fi.dy.masa.minihud.Reference;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineHorseSpeed extends InfoLine
 {
@@ -41,6 +42,11 @@ public class InfoLineHorseSpeed extends InfoLine
 
     @Override
     public boolean succeededType() { return this.succeeded; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.PASSENGER;
+    }
 
     @Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)

@@ -471,130 +471,109 @@ public class RenderHandler implements IRenderer
 
         @SuppressWarnings("deprecation")
         boolean isChunkLoaded = mc.level.hasChunkAt(pos);
-        
-        SpeedUnits speedUnits = (SpeedUnits) Configs.Generic.SPEED_UNITS.getOptionListValue();
 
-        if (isChunkLoaded == false)
+        if (!isChunkLoaded)
         {
             return;
         }
 
-        else if (type == InfoToggle.HORSE_SPEED ||
-                 type == InfoToggle.HORSE_JUMP ||
-                 type == InfoToggle.HORSE_MAX_HEALTH)
+        InfoLine parser = type.initParser();
+
+        if (parser == null)
         {
-            if (this.addedTypes.contains(type))
+            return;
+        }
+
+        List<InfoToggle> sameLineToggles = parser.getSameLineToggles();
+
+        // Don't add the same line multiple times
+        if (this.addedTypes.contains(type) || sameLineToggles.stream().anyMatch(this.addedTypes::contains))
+        {
+            return;
+        }
+
+        InfoLine.EntityProvider entityProvider = parser.getEntityProvider();
+        InfoLine.BlockProvider blockProvider = parser.getBlockProvider();
+        boolean provideBestWorld = parser.shouldBestWorld() ||
+            entityProvider == InfoLine.EntityProvider.PASSENGER ||
+            blockProvider != InfoLine.BlockProvider.EMPTY
+            ;
+
+        Level level = provideBestWorld ? WorldUtils.getBestWorld(mc) : world;
+
+        Pair<Entity, CompoundData> ent = switch (entityProvider)
+        {
+            case EMPTY -> EMPTY_ENTITY;
+            case CAMERA -> Pair.of(entity, null);
+            case MC_PLAYER -> Pair.of(mc.player, null);
+            case LOOKING -> this.getTargetEntity(world, mc);
+            case PASSENGER ->
             {
-                return;
-            }
+                Pair<Entity, CompoundData> target = this.getTargetEntity(world, mc);
 
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(bestWorld, mc);
-                InfoLineContext ctx;
-
-                if (mc.player.isPassenger() && pair == null)
+                if (target != null)
                 {
-                    ctx = new InfoLineContext(bestWorld, mc.player.getVehicle(), null, null, null, null, null);
-                }
-                else if (pair != null)
-                {
-                    ctx = new InfoLineContext(bestWorld, pair.getLeft(), null, null, null, null, pair.getRight());
+                    yield target;
                 }
                 else
                 {
-                    return;
-                }
-
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
+                    if (mc.player.isPassenger())
+                    {
+                        yield Pair.of(mc.player.getVehicle(), null);
+                    }
+                    else
+                    {
+                        yield null;
+                    }
                 }
             }
+        };
+
+        if (ent == null)
+        {
+            return;
+        }
+
+        Triple<BlockState, BlockEntity, CompoundData> block;
+        if (blockProvider == InfoLine.BlockProvider.EMPTY)
+        {
+            block = EMPTY_BLOCK;
+        }
+        else if (blockProvider.withBlockEntity)
+        {
+            block = this.getTargetedBlockFullInfo(level, mc);
         }
         else
         {
-            InfoLine parser = type.initParser();
+            BlockState blockState = this.getTargetedBlock(mc);
 
-            if (parser == null)
+            if (blockState != null)
             {
-                return;
-            }
-
-            List<InfoToggle> sameLineToggles = parser.getSameLineToggles();
-
-            // Don't add the same line multiple times
-            if (this.addedTypes.contains(type) || sameLineToggles.stream().anyMatch(this.addedTypes::contains))
-            {
-                return;
-            }
-
-            InfoLine.EntityProvider entityProvider = parser.getEntityProvider();
-            InfoLine.BlockProvider blockProvider = parser.getBlockProvider();
-            boolean provideBestWorld = parser.shouldBestWorld() || blockProvider != InfoLine.BlockProvider.EMPTY;
-
-            Level level = provideBestWorld ? WorldUtils.getBestWorld(mc) : world;
-
-            Pair<Entity, CompoundData> ent = switch (entityProvider)
-            {
-                case EMPTY -> EMPTY_ENTITY;
-                case CAMERA -> Pair.of(entity, null);
-                case MC_PLAYER -> Pair.of(mc.player, null);
-                case LOOKING -> this.getTargetEntity(world, mc);
-            };
-
-            if (ent == null)
-            {
-                return;
-            }
-
-            Triple<BlockState, BlockEntity, CompoundData> block;
-            if (blockProvider == InfoLine.BlockProvider.EMPTY)
-            {
-                block = EMPTY_BLOCK;
-            }
-            else if (blockProvider.withBlockEntity)
-            {
-                block = this.getTargetedBlockFullInfo(level, mc);
+                block = Triple.of(blockState, null, null);
             }
             else
             {
-                BlockState blockState = this.getTargetedBlock(mc);
-
-                if (blockState != null)
-                {
-                    block = Triple.of(blockState, null, null);
-                }
-                else
-                {
-                    block = null;
-                }
+                block = null;
             }
-
-            if (block == null)
-            {
-                return;
-            }
-
-            CompoundData compound = Optional.ofNullable(ent.getRight()).orElse(block.getRight());
-
-            BlockPos requestPos = blockProvider.useLookingPos ? ((BlockHitResult) mc.hitResult).getBlockPos(): pos;
-
-            InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), block.getMiddle(), requestPos, block.getLeft(), chunkPos, compound);
-            this.processEntries(parser.parse(ctx));
-
-            if (parser.succeededType())
-            {
-                this.addedTypes.add(type);
-            }
-
         }
+
+        if (block == null)
+        {
+            return;
+        }
+
+        CompoundData compound = Optional.ofNullable(ent.getRight()).orElse(block.getRight());
+
+        BlockPos requestPos = blockProvider.useLookingPos ? ((BlockHitResult) mc.hitResult).getBlockPos(): pos;
+
+        InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), block.getMiddle(), requestPos, block.getLeft(), chunkPos, compound);
+        this.processEntries(parser.parse(ctx));
+
+        if (parser.succeededType())
+        {
+            this.addedTypes.add(type);
+        }
+
     }
 
     private boolean isEntityDataValid(@Nonnull CompoundData data)

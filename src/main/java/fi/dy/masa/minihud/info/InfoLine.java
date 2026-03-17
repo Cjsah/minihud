@@ -139,8 +139,9 @@ public abstract class InfoLine
     /**
      * Define what world that {@link InfoLineContext} should provide<br>
      * <p>
-     * In the following situations, bestWorld will be required by default,
+     * In the one of following situations, bestWorld will be required by default,
      * and this method will no longer be effective.<br>
+     * - The method {@link InfoLine#getEntityProvider} return {@link EntityProvider#PASSENGER}<br>
      * - The method {@link InfoLine#getBlockProvider} does not return {@link BlockProvider#EMPTY}
      * </p>
      */
@@ -191,14 +192,15 @@ public abstract class InfoLine
     }
 
     public enum EntityProvider {
-        EMPTY, //default
+        EMPTY,
         MC_PLAYER,
         CAMERA,
-        LOOKING
+        LOOKING,
+        PASSENGER
     }
 
     public enum BlockProvider {
-        EMPTY                           (false, false), // default
+        EMPTY                           (false, false),
         STATE_ONLY                      (false, false),
         STATE_WITH_LOOKING              (false, true),
         WITH_BLOCK_ENTITY               (true,  false),

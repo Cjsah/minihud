@@ -16,6 +16,7 @@ import fi.dy.masa.minihud.Reference;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineHorseJump extends InfoLine
 {
@@ -34,6 +35,11 @@ public class InfoLineHorseJump extends InfoLine
 
     @Override
     public boolean succeededType() { return this.succeeded; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.PASSENGER;
+    }
 
     /**
      * Calculates the maximum jump height in blocks from a horse's jump strength
