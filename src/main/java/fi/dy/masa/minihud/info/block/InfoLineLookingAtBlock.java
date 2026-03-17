@@ -12,6 +12,7 @@ import fi.dy.masa.minihud.Reference;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineLookingAtBlock extends InfoLine
 {
@@ -29,6 +30,19 @@ public class InfoLineLookingAtBlock extends InfoLine
 
     @Override
     public boolean succeededType() { return this.succeeded; }
+
+    @Override
+    public @NonNull List<InfoToggle> getSameLineToggles() {
+        return List.of(
+            InfoToggle.LOOKING_AT_BLOCK,
+            InfoToggle.LOOKING_AT_BLOCK_CHUNK
+        );
+    }
+
+    @Override
+    public BlockProvider getBlockProvider() {
+        return BlockProvider.STATE_WITH_LOOKING;
+    }
 
     @Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)

@@ -198,8 +198,19 @@ public abstract class InfoLine
     }
 
     public enum BlockProvider {
-        EMPTY, // default
-        STATE_ONLY,
-        WITH_BLOCK_ENTITY
+        EMPTY                           (false, false), // default
+        STATE_ONLY                      (false, false),
+        STATE_WITH_LOOKING              (false, true),
+        WITH_BLOCK_ENTITY               (true,  false),
+        WITH_BLOCK_ENTITY_AND_LOOKING   (true,  true);
+
+        public final boolean withBlockEntity;
+        public final boolean useLookingPos;
+
+        BlockProvider(boolean withBlockEntity, boolean useLookingPos)
+        {
+            this.withBlockEntity = withBlockEntity;
+            this.useLookingPos = useLookingPos;
+        }
     }
 }

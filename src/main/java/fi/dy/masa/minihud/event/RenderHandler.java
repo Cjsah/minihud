@@ -518,63 +518,6 @@ public class RenderHandler implements IRenderer
                 }
             }
         }
-        else if (type == InfoToggle.LOOKING_AT_BLOCK ||
-                 type == InfoToggle.LOOKING_AT_BLOCK_CHUNK)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                BlockState state = this.getTargetedBlock(mc);
-
-                if (state != null)
-                {
-                    BlockPos lookPos = ((BlockHitResult) mc.hitResult).getBlockPos();
-                    InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, lookPos, state, null, null);
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-            }
-        }
-        else if (type == InfoToggle.BLOCK_PROPS)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                BlockState state = this.getTargetedBlock(mc);
-
-                if (state != null)
-                {
-                    BlockPos lookPos = ((BlockHitResult) mc.hitResult).getBlockPos();
-                    InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, lookPos, state, null, null);
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-            }
-        }
         else
         {
             InfoLine parser = type.initParser();
@@ -611,22 +554,28 @@ public class RenderHandler implements IRenderer
                 return;
             }
 
-            Triple<BlockState, BlockEntity, CompoundData> block = switch (blockProvider)
+            Triple<BlockState, BlockEntity, CompoundData> block;
+            if (blockProvider == InfoLine.BlockProvider.EMPTY)
             {
-                case EMPTY -> EMPTY_BLOCK;
-                case STATE_ONLY ->
+                block = EMPTY_BLOCK;
+            }
+            else if (blockProvider.withBlockEntity)
+            {
+                block = this.getTargetedBlockFullInfo(level, mc);
+            }
+            else
+            {
+                BlockState blockState = this.getTargetedBlock(mc);
+
+                if (blockState != null)
                 {
-                    BlockState blockState = this.getTargetedBlock(mc);
-
-                    if (blockState == null)
-                    {
-                        yield null;
-                    }
-
-                    yield Triple.of(blockState, null, null);
+                    block = Triple.of(blockState, null, null);
                 }
-                case WITH_BLOCK_ENTITY -> this.getTargetedBlockFullInfo(level, mc);
-            };
+                else
+                {
+                    block = null;
+                }
+            }
 
             if (block == null)
             {
@@ -635,7 +584,9 @@ public class RenderHandler implements IRenderer
 
             CompoundData compound = Optional.ofNullable(ent.getRight()).orElse(block.getRight());
 
-            InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), block.getMiddle(), pos, block.getLeft(), chunkPos, compound);
+            BlockPos requestPos = blockProvider.useLookingPos ? ((BlockHitResult) mc.hitResult).getBlockPos(): pos;
+
+            InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), block.getMiddle(), requestPos, block.getLeft(), chunkPos, compound);
             this.processEntries(parser.parse(ctx));
 
             if (parser.succeededType())
