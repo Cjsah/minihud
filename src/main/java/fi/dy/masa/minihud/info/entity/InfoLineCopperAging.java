@@ -19,6 +19,7 @@ import fi.dy.masa.minihud.info.InfoLineContext;
 import fi.dy.masa.minihud.mixin.entity.IMixinCopperGolemEntity;
 import fi.dy.masa.minihud.util.CopperAgingMode;
 import fi.dy.masa.minihud.util.MiscUtils;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineCopperAging extends InfoLine
 {
@@ -36,6 +37,11 @@ public class InfoLineCopperAging extends InfoLine
 
     @Override
     public boolean succeededType() { return false; }
+
+	@Override
+	public @NonNull EntityProvider getEntityProvider() {
+		return EntityProvider.LOOKING;
+	}
 
     @Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)

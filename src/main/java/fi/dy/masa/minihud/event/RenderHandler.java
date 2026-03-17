@@ -474,106 +474,6 @@ public class RenderHandler implements IRenderer
             return;
         }
 
-        if (type == InfoToggle.SERVER_TPS)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.SERVUX)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.WEATHER)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.MOB_CAPS)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-        }
         else if (type == InfoToggle.BEE_COUNT)
         {
             // Make into a generic call
@@ -620,15 +520,8 @@ public class RenderHandler implements IRenderer
                         return;
                     }
                 }
-                else
-                {
-                    return;
-                }
             }
-            else
-            {
-                return;
-            }
+
         }
         else if (type == InfoToggle.HONEY_LEVEL)
         {
@@ -649,15 +542,8 @@ public class RenderHandler implements IRenderer
                         this.addedTypes.add(type);
                     }
                 }
-                else
-                {
-                    return;
-                }
             }
-            else
-            {
-                return;
-            }
+
         }
         else if (type == InfoToggle.FURNACE_XP)
         {
@@ -720,332 +606,6 @@ public class RenderHandler implements IRenderer
                     this.addedTypes.add(type);
                 }
             }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.LOADED_CHUNKS_COUNT)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(bestWorld, null, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.PANDA_GENE)
-        {
-            // Make into a generic call
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.ENTITIES_CLIENT_WORLD)
-        {
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(WorldUtils.getBestWorld(mc), null, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-	        }
-	        else
-	        {
-		        return;
-	        }
-        }
-        else if (type == InfoToggle.LOOKING_AT_ENTITY)
-        {
-            // Make into a generic call
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.ENTITY_VARIANT)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.ENTITY_HOME_POS)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-		else if (type == InfoToggle.ENTITY_COPPER_AGING)
-		{
-			InfoLine parser = type.initParser();
-
-			if (parser != null)
-			{
-				Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-				if (pair != null)
-				{
-					InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-					this.processEntries(parser.parse(ctx));
-
-					if (parser.succeededType())
-					{
-						this.addedTypes.add(type);
-					}
-				}
-				else
-				{
-					return;
-				}
-			}
-			else
-			{
-				return;
-			}
-		}
-        else if (type == InfoToggle.LOOKING_AT_EFFECTS)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.ZOMBIE_CONVERSION)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.DOLPHIN_TREASURE)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.ENTITY_REG_NAME)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.LOOKING_AT_PLAYER_EXP)
-        {
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Pair<Entity, CompoundData> pair = this.getTargetEntity(world, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, pair.getLeft(), null, null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
         }
         else if (type == InfoToggle.LOOKING_AT_BLOCK ||
                  type == InfoToggle.LOOKING_AT_BLOCK_CHUNK)
@@ -1074,14 +634,6 @@ public class RenderHandler implements IRenderer
                         this.addedTypes.add(type);
                     }
                 }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
             }
         }
         else if (type == InfoToggle.BLOCK_PROPS)
@@ -1110,35 +662,6 @@ public class RenderHandler implements IRenderer
                         this.addedTypes.add(type);
                     }
                 }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.SCULK_WARNING_LEVEL)
-        {
-            if (this.addedTypes.contains(type))
-            {
-                return;
-            }
-
-            // Make into a generic call
-            Level bestWorld = WorldUtils.getBestWorld(mc);
-            InfoLine parser = type.initParser();
-
-            if (parser != null && mc.player != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(bestWorld, mc.player, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-            }
-            else
-            {
-                return;
             }
         }
         else
@@ -1153,21 +676,31 @@ public class RenderHandler implements IRenderer
             List<InfoToggle> sameLineToggles = parser.getSameLineToggles();
 
             // Don't add the same line multiple times
-            if (this.addedTypes.contains(type) ||
-                sameLineToggles.stream().anyMatch(this.addedTypes::contains))
+            if (this.addedTypes.contains(type) || sameLineToggles.stream().anyMatch(this.addedTypes::contains))
             {
                 return;
             }
 
-            Entity ent = switch (parser.getEntityProvider())
+            InfoLine.EntityProvider entityProvider = parser.getEntityProvider();
+            boolean provideBlock = parser.shouldProvideBlock();
+            boolean provideBestWorld = parser.shouldBestWorld() || provideBlock;
+
+            Level level = provideBestWorld ? WorldUtils.getBestWorld(mc) : world;
+
+            Pair<Entity, CompoundData> ent = switch (entityProvider)
             {
-                case EMPTY -> null;
-                case CAMERA -> entity;
-                case MC_PLAYER -> mc.player;
+                case EMPTY -> Pair.of(null, null);
+                case CAMERA -> Pair.of(entity, null);
+                case MC_PLAYER -> Pair.of(mc.player, null);
+                case LOOKING -> this.getTargetEntity(world, mc);
             };
 
+            if (ent == null)
+            {
+                return;
+            }
 
-            InfoLineContext ctx = new InfoLineContext(world, ent, null, pos, null, chunkPos, null);
+            InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), null, pos, null, chunkPos, ent.getRight());
             this.processEntries(parser.parse(ctx));
 
             if (parser.succeededType())

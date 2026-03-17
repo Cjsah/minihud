@@ -21,6 +21,7 @@ import fi.dy.masa.minihud.mixin.entity.IMixinSkeletonEntity;
 import fi.dy.masa.minihud.mixin.entity.IMixinZombieEntity;
 import fi.dy.masa.minihud.mixin.entity.IMixinZombieVillagerEntity;
 import fi.dy.masa.minihud.util.MiscUtils;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineZombieConversion extends InfoLine
 {
@@ -38,6 +39,11 @@ public class InfoLineZombieConversion extends InfoLine
 
     @Override
     public boolean succeededType() { return false; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.LOOKING;
+    }
 
     @Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)

@@ -17,6 +17,7 @@ import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
 import fi.dy.masa.minihud.mixin.entity.IMixinPassiveEntity;
 import fi.dy.masa.minihud.util.MiscUtils;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineLookingAtEntity extends InfoLine
 {
@@ -34,6 +35,11 @@ public class InfoLineLookingAtEntity extends InfoLine
 
     @Override
     public boolean succeededType() { return false; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.LOOKING;
+    }
 
     @Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)

@@ -29,6 +29,11 @@ public class InfoLineLoadedChunks extends InfoLine
     public boolean succeededType() { return false; }
 
     @Override
+    public boolean shouldBestWorld() {
+        return true;
+    }
+
+    @Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)
     {
         if (this.getClientWorld() == null)

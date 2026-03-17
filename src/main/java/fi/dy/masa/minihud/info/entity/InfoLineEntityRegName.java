@@ -13,6 +13,7 @@ import fi.dy.masa.minihud.Reference;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineEntityRegName extends InfoLine
 {
@@ -30,6 +31,11 @@ public class InfoLineEntityRegName extends InfoLine
 
     @Override
     public boolean succeededType() { return false; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.LOOKING;
+    }
 
     @Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)

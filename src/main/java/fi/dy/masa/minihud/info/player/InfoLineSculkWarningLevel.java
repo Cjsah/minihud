@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -32,6 +33,16 @@ public class InfoLineSculkWarningLevel extends InfoLine
 
     @Override
     public boolean succeededType() { return false; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.MC_PLAYER;
+    }
+
+    @Override
+    public boolean shouldBestWorld() {
+        return true;
+    }
 
     @Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)

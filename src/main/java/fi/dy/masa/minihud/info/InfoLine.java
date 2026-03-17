@@ -128,9 +128,25 @@ public abstract class InfoLine
 
     public abstract boolean succeededType();
 
+    /**
+     * Make sure don't add the same line multiple times
+     */
     public @Nonnull List<InfoToggle> getSameLineToggles()
     {
         return List.of();
+    }
+
+    /**
+     * Define what world InfoLineContext should provide<br>
+     * <p>
+     * In the following situations, bestWorld will be required by default,
+     * and this method will no longer be effective.<br>
+     * - method {@link InfoLine#shouldProvideBlock} returns true
+     * </p>
+     */
+    public boolean shouldBestWorld()
+    {
+        return false;
     }
 
     /**
@@ -140,6 +156,15 @@ public abstract class InfoLine
     {
         return EntityProvider.EMPTY;
     }
+
+    /**
+     * Define what entity InfoLineContext should provide
+     */
+    public boolean shouldProvideBlock()
+    {
+        return false;
+    }
+
 
     public record Entry(@Nonnull String format, @Nullable Object... args)
     {
@@ -169,6 +194,7 @@ public abstract class InfoLine
     public enum EntityProvider {
         EMPTY, //default
         MC_PLAYER,
-        CAMERA
+        CAMERA,
+        LOOKING
     }
 }
