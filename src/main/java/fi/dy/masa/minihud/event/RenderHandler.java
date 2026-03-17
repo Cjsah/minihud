@@ -67,7 +67,6 @@ import fi.dy.masa.minihud.renderer.InventoryOverlayHandler;
 import fi.dy.masa.minihud.renderer.OverlayRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.MiscUtils;
-import fi.dy.masa.minihud.util.SpeedUnits;
 
 public class RenderHandler implements IRenderer
 {
