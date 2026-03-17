@@ -12,6 +12,7 @@ import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
 import fi.dy.masa.minihud.info.InfoLineRenderStats;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineRenderEntitiesBase extends InfoLine
 {
@@ -26,7 +27,15 @@ public class InfoLineRenderEntitiesBase extends InfoLine
     @Override
     public boolean succeededType() { return this.succeeded; }
 
-    @Override
+	@Override
+	public @NonNull List<InfoToggle> getSameLineToggles() {
+		return List.of(
+			InfoToggle.ENTITIES,
+			InfoToggle.TILE_ENTITIES
+		);
+	}
+
+	@Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)
     {
         if (this.getClientWorld() == null)

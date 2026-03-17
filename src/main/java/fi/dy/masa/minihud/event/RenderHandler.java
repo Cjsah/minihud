@@ -573,96 +573,6 @@ public class RenderHandler implements IRenderer
                     this.addedTypes.add(type);
                 }
             }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.COORDINATES ||
-                 type == InfoToggle.COORDINATES_SCALED ||
-                 type == InfoToggle.DIMENSION)
-        {
-            // Don't add the same line multiple times
-            if (this.addedTypes.contains(InfoToggle.COORDINATES) ||
-                this.addedTypes.contains(InfoToggle.COORDINATES_SCALED) ||
-                this.addedTypes.contains(InfoToggle.DIMENSION))
-            {
-                return;
-            }
-
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                InfoLineContext ctx = new InfoLineContext(world, entity, null, null, null, null, null);
-                this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-        else if (type == InfoToggle.BLOCK_POS ||
-                 type == InfoToggle.CHUNK_POS ||
-                 type == InfoToggle.REGION_FILE)
-        {
-            // Don't add the same line multiple times
-            if (this.addedTypes.contains(InfoToggle.BLOCK_POS) ||
-                this.addedTypes.contains(InfoToggle.CHUNK_POS) ||
-                this.addedTypes.contains(InfoToggle.REGION_FILE))
-            {
-                return;
-            }
-
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, null, null, pos, null, chunkPos, null);
-		        this.processEntries(parser.parse(ctx));
-
-				if (parser.succeededType())
-				{
-					this.addedTypes.add(type);
-				}
-	        }
-	        else
-	        {
-		        return;
-	        }
-        }
-        else if (type == InfoToggle.DISTANCE)
-        {
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, entity, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-	        }
-	        else
-	        {
-		        return;
-	        }
-        }
-        else if (type == InfoToggle.FACING)
-        {
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, entity, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-	        }
-	        else
-	        {
-		        return;
-	        }
         }
         else if (type == InfoToggle.BEE_COUNT)
         {
@@ -684,14 +594,6 @@ public class RenderHandler implements IRenderer
                         this.addedTypes.add(type);
                     }
                 }
-                else
-                {
-                    return;
-                }
-            }
-            else
-            {
-                return;
             }
         }
         else if (type == InfoToggle.COMPARATOR_OUTPUT)
@@ -777,15 +679,8 @@ public class RenderHandler implements IRenderer
                         this.addedTypes.add(type);
                     }
                 }
-                else
-                {
-                    return;
-                }
             }
-            else
-            {
-                return;
-            }
+
         }
         else if (type == InfoToggle.HORSE_SPEED ||
                  type == InfoToggle.HORSE_JUMP ||
@@ -829,63 +724,6 @@ public class RenderHandler implements IRenderer
             {
                 return;
             }
-        }
-        else if (type == InfoToggle.ROTATION_YAW ||
-                 type == InfoToggle.ROTATION_PITCH ||
-                 type == InfoToggle.SPEED)
-        {
-            // Don't add the same line multiple times
-            if (this.addedTypes.contains(InfoToggle.ROTATION_YAW) ||
-                this.addedTypes.contains(InfoToggle.ROTATION_PITCH) ||
-                this.addedTypes.contains(InfoToggle.SPEED))
-            {
-                return;
-            }
-
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, entity, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-
-		        if (parser.succeededType())
-		        {
-			        this.addedTypes.add(type);
-		        }
-	        }
-	        else
-	        {
-		        return;
-	        }
-        }
-        else if (type == InfoToggle.SPEED_HV)
-        {
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, entity, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-	        }
-	        else
-	        {
-		        return;
-	        }
-        }
-        else if (type == InfoToggle.SPEED_AXIS)
-        {
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, entity, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-	        }
-	        else
-	        {
-		        return;
-	        }
         }
         else if (type == InfoToggle.LOADED_CHUNKS_COUNT)
         {
@@ -941,32 +779,6 @@ public class RenderHandler implements IRenderer
             {
                 return;
             }
-        }
-        else if (type == InfoToggle.ENTITIES ||
-                 type == InfoToggle.TILE_ENTITIES)
-        {
-            if (this.addedTypes.contains(InfoToggle.ENTITIES) ||
-                this.addedTypes.contains(InfoToggle.TILE_ENTITIES))
-            {
-                return;
-            }
-
-            InfoLine parser = type.initParser();
-
-	        if (parser != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, null, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-
-                if (parser.succeededType())
-                {
-                    this.addedTypes.add(type);
-                }
-            }
-	        else
-	        {
-		        return;
-	        }
         }
         else if (type == InfoToggle.ENTITIES_CLIENT_WORLD)
         {
@@ -1207,20 +1019,6 @@ public class RenderHandler implements IRenderer
                 return;
             }
         }
-        else if (type == InfoToggle.PLAYER_EXPERIENCE)
-        {
-	        InfoLine parser = type.initParser();
-
-	        if (parser != null && mc.player != null)
-	        {
-		        InfoLineContext ctx = new InfoLineContext(world, mc.player, null, null, null, null, null);
-		        this.processEntries(parser.parse(ctx));
-	        }
-	        else
-	        {
-		        return;
-	        }
-        }
         else if (type == InfoToggle.LOOKING_AT_PLAYER_EXP)
         {
             InfoLine parser = type.initParser();
@@ -1361,7 +1159,15 @@ public class RenderHandler implements IRenderer
                 return;
             }
 
-            InfoLineContext ctx = new InfoLineContext(world, mc.player, null, pos, null, chunkPos, null);
+            Entity ent = switch (parser.getEntityProvider())
+            {
+                case EMPTY -> null;
+                case CAMERA -> entity;
+                case MC_PLAYER -> mc.player;
+            };
+
+
+            InfoLineContext ctx = new InfoLineContext(world, ent, null, pos, null, chunkPos, null);
             this.processEntries(parser.parse(ctx));
 
             if (parser.succeededType())

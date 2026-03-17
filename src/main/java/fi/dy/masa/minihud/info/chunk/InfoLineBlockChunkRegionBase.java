@@ -10,6 +10,7 @@ import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
+import org.jspecify.annotations.NonNull;
 
 public abstract class InfoLineBlockChunkRegionBase extends InfoLine
 {
@@ -25,7 +26,16 @@ public abstract class InfoLineBlockChunkRegionBase extends InfoLine
     @Override
     public boolean succeededType() { return this.succeeded; }
 
-    @Override
+	@Override
+	public @NonNull List<InfoToggle> getSameLineToggles() {
+		return List.of(
+			InfoToggle.BLOCK_POS,
+			InfoToggle.CHUNK_POS,
+			InfoToggle.REGION_FILE
+		);
+	}
+
+	@Override
     public List<Entry> parse(@NotNull InfoLineContext ctx)
     {
         if (ctx.world() == null) return null;

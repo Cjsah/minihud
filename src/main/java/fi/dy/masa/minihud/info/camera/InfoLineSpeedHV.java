@@ -11,6 +11,7 @@ import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
 import fi.dy.masa.minihud.util.SpeedUnits;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineSpeedHV extends InfoLine
 {
@@ -35,6 +36,11 @@ public class InfoLineSpeedHV extends InfoLine
         if (ctx.world() == null) return null;
 
         return ctx.ent() != null ? this.parseEnt(ctx.world(), ctx.ent()) : null;
+    }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.CAMERA;
     }
 
     @Override

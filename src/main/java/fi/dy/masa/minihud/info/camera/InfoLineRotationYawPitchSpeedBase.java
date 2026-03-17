@@ -39,6 +39,11 @@ public abstract class InfoLineRotationYawPitchSpeedBase extends InfoLine
 	}
 
 	@Override
+	public @NonNull EntityProvider getEntityProvider() {
+		return EntityProvider.CAMERA;
+	}
+
+	@Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)
     {
         if (ctx.world() == null || ctx.ent() == null) return null;

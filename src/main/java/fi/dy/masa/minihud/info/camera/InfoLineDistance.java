@@ -11,6 +11,7 @@ import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
 import fi.dy.masa.minihud.util.DataStorage;
+import org.jspecify.annotations.NonNull;
 
 public class InfoLineDistance extends InfoLine
 {
@@ -28,6 +29,11 @@ public class InfoLineDistance extends InfoLine
 
     @Override
     public boolean succeededType() { return false; }
+
+    @Override
+    public @NonNull EntityProvider getEntityProvider() {
+        return EntityProvider.CAMERA;
+    }
 
     @Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)

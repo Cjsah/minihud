@@ -128,13 +128,18 @@ public abstract class InfoLine
 
     public abstract boolean succeededType();
 
-    public abstract @Nonnull EntityProvider getEntityProvider();
-
     public @Nonnull List<InfoToggle> getSameLineToggles()
     {
         return List.of();
     }
 
+    /**
+     * Define what entity InfoLineContext should provide
+     */
+    public @Nonnull EntityProvider getEntityProvider()
+    {
+        return EntityProvider.EMPTY;
+    }
 
     public record Entry(@Nonnull String format, @Nullable Object... args)
     {
@@ -164,6 +169,6 @@ public abstract class InfoLine
     public enum EntityProvider {
         EMPTY, //default
         MC_PLAYER,
-        CAMERA;
+        CAMERA
     }
 }
