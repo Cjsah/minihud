@@ -495,8 +495,7 @@ public class RenderHandler implements IRenderer
         InfoLine.BlockProvider blockProvider = parser.getBlockProvider();
         boolean provideBestWorld = parser.shouldBestWorld() ||
             entityProvider == InfoLine.EntityProvider.PASSENGER ||
-            blockProvider != InfoLine.BlockProvider.EMPTY
-            ;
+            blockProvider != InfoLine.BlockProvider.EMPTY;
 
         Level level = provideBestWorld ? WorldUtils.getBestWorld(mc) : world;
 
