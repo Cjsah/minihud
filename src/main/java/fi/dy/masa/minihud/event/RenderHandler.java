@@ -5,6 +5,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Matrix4f;
@@ -71,10 +74,6 @@ import fi.dy.masa.minihud.util.MiscUtils;
 public class RenderHandler implements IRenderer
 {
     private static final RenderHandler INSTANCE = new RenderHandler();
-
-    // avoid create repeat objects every frame
-    public static final Pair<Entity, CompoundData> EMPTY_ENTITY = Pair.of(null, null);
-    public static final Triple<BlockState, BlockEntity, CompoundData> EMPTY_BLOCK = Triple.of(null, null, null);
 
     private final Minecraft mc;
     private final DataStorage data;
@@ -501,7 +500,7 @@ public class RenderHandler implements IRenderer
 
         Pair<Entity, CompoundData> ent = switch (entityProvider)
         {
-            case EMPTY -> EMPTY_ENTITY;
+            case EMPTY -> ImmutablePair.nullPair();
             case CAMERA -> Pair.of(entity, null);
             case MC_PLAYER -> Pair.of(mc.player, null);
             case LOOKING -> this.getTargetEntity(world, mc);
@@ -535,7 +534,7 @@ public class RenderHandler implements IRenderer
         Triple<BlockState, BlockEntity, CompoundData> block;
         if (blockProvider == InfoLine.BlockProvider.EMPTY)
         {
-            block = EMPTY_BLOCK;
+            block = ImmutableTriple.nullTriple();
         }
         else if (blockProvider.withBlockEntity)
         {
