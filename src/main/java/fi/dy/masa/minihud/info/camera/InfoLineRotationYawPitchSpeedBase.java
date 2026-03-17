@@ -12,6 +12,7 @@ import fi.dy.masa.minihud.config.InfoToggle;
 import fi.dy.masa.minihud.info.InfoLine;
 import fi.dy.masa.minihud.info.InfoLineContext;
 import fi.dy.masa.minihud.util.SpeedUnits;
+import org.jspecify.annotations.NonNull;
 
 public abstract class InfoLineRotationYawPitchSpeedBase extends InfoLine
 {
@@ -27,7 +28,17 @@ public abstract class InfoLineRotationYawPitchSpeedBase extends InfoLine
     @Override
     public boolean succeededType() { return this.succeeded; }
 
-    @Override
+	@Override
+	public @NonNull List<InfoToggle> getSameLineToggles()
+	{
+		return List.of(
+			InfoToggle.ROTATION_YAW,
+			InfoToggle.ROTATION_PITCH,
+			InfoToggle.SPEED
+		);
+	}
+
+	@Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)
     {
         if (ctx.world() == null || ctx.ent() == null) return null;

@@ -128,6 +128,14 @@ public abstract class InfoLine
 
     public abstract boolean succeededType();
 
+    public abstract @Nonnull EntityProvider getEntityProvider();
+
+    public @Nonnull List<InfoToggle> getSameLineToggles()
+    {
+        return List.of();
+    }
+
+
     public record Entry(@Nonnull String format, @Nullable Object... args)
     {
         private static boolean translated = false;
@@ -151,5 +159,11 @@ public abstract class InfoLine
         {
             return translated;
         }
+    }
+
+    public enum EntityProvider {
+        EMPTY, //default
+        MC_PLAYER,
+        CAMERA;
     }
 }
