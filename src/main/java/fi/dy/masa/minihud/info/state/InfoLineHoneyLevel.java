@@ -30,6 +30,11 @@ public class InfoLineHoneyLevel extends InfoLine
     public boolean succeededType() { return false; }
 
     @Override
+    public BlockProvider getBlockProvider() {
+        return BlockProvider.STATE_ONLY;
+    }
+
+    @Override
     public List<Entry> parse(@Nonnull InfoLineContext ctx)
     {
         if (ctx.world() == null) return null;

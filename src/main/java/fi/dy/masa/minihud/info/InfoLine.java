@@ -137,11 +137,11 @@ public abstract class InfoLine
     }
 
     /**
-     * Define what world InfoLineContext should provide<br>
+     * Define what world that {@link InfoLineContext} should provide<br>
      * <p>
      * In the following situations, bestWorld will be required by default,
      * and this method will no longer be effective.<br>
-     * - method {@link InfoLine#shouldProvideBlock} returns true
+     * - The method {@link InfoLine#getBlockProvider} does not return {@link BlockProvider#EMPTY}
      * </p>
      */
     public boolean shouldBestWorld()
@@ -150,7 +150,7 @@ public abstract class InfoLine
     }
 
     /**
-     * Define what entity InfoLineContext should provide
+     * Define what entity that {@link InfoLineContext} should provide
      */
     public @Nonnull EntityProvider getEntityProvider()
     {
@@ -158,13 +158,12 @@ public abstract class InfoLine
     }
 
     /**
-     * Define what entity InfoLineContext should provide
+     * Define what block state or block entity that {@link InfoLineContext} should provide
      */
-    public boolean shouldProvideBlock()
+    public BlockProvider getBlockProvider()
     {
-        return false;
+        return BlockProvider.EMPTY;
     }
-
 
     public record Entry(@Nonnull String format, @Nullable Object... args)
     {
@@ -196,5 +195,11 @@ public abstract class InfoLine
         MC_PLAYER,
         CAMERA,
         LOOKING
+    }
+
+    public enum BlockProvider {
+        EMPTY, // default
+        STATE_ONLY,
+        WITH_BLOCK_ENTITY
     }
 }

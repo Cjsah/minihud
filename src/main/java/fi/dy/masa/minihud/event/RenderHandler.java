@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
@@ -72,6 +73,10 @@ public class RenderHandler implements IRenderer
 {
     private static final RenderHandler INSTANCE = new RenderHandler();
 
+    // avoid create repeat objects every frame
+    public static final Pair<Entity, CompoundData> EMPTY_ENTITY = Pair.of(null, null);
+    public static final Triple<BlockState, BlockEntity, CompoundData> EMPTY_BLOCK = Triple.of(null, null, null);
+
     private final Minecraft mc;
     private final DataStorage data;
     private final HudDataManager hudData;
@@ -83,7 +88,7 @@ public class RenderHandler implements IRenderer
 
     private final List<StringHolder> lineWrappers = new ArrayList<>();
     private final List<String> lines = new ArrayList<>();
-    private Pair<BlockEntity, CompoundData> lastBlockEntity = null;
+    private Triple<BlockState, BlockEntity, CompoundData> lastBlockEntity = null;
     private Pair<Entity, CompoundData> lastEntity = null;
     private Pair<Entity, CompoundData> lastEnderItems = null;
 
@@ -474,100 +479,6 @@ public class RenderHandler implements IRenderer
             return;
         }
 
-        else if (type == InfoToggle.BEE_COUNT)
-        {
-            // Make into a generic call
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Level bestWorld = WorldUtils.getBestWorld(mc);
-                Pair<BlockEntity, CompoundData> pair = this.getTargetedBlockEntity(bestWorld, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(bestWorld, null, pair.getLeft(), null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-            }
-        }
-        else if (type == InfoToggle.COMPARATOR_OUTPUT)
-        {
-            // Make into a generic call
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Level bestWorld = WorldUtils.getBestWorld(mc);
-                Pair<BlockEntity, CompoundData> pair = this.getTargetedBlockEntity(bestWorld, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(bestWorld, null, pair.getLeft(), null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-            }
-
-        }
-        else if (type == InfoToggle.HONEY_LEVEL)
-        {
-            // Make into a generic call
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                BlockState state = this.getTargetedBlock(mc);
-
-                if (state != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(world, null, null, null, state, null, null);
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-            }
-
-        }
-        else if (type == InfoToggle.FURNACE_XP)
-        {
-            // Make into a generic call
-            InfoLine parser = type.initParser();
-
-            if (parser != null)
-            {
-                Level bestWorld = WorldUtils.getBestWorld(mc);
-                Pair<BlockEntity, CompoundData> pair = this.getTargetedBlockEntity(bestWorld, mc);
-
-                if (pair != null)
-                {
-                    InfoLineContext ctx = new InfoLineContext(bestWorld, null, pair.getLeft(), null, null, null, pair.getRight());
-                    this.processEntries(parser.parse(ctx));
-
-                    if (parser.succeededType())
-                    {
-                        this.addedTypes.add(type);
-                    }
-                }
-            }
-
-        }
         else if (type == InfoToggle.HORSE_SPEED ||
                  type == InfoToggle.HORSE_JUMP ||
                  type == InfoToggle.HORSE_MAX_HEALTH)
@@ -682,14 +593,14 @@ public class RenderHandler implements IRenderer
             }
 
             InfoLine.EntityProvider entityProvider = parser.getEntityProvider();
-            boolean provideBlock = parser.shouldProvideBlock();
-            boolean provideBestWorld = parser.shouldBestWorld() || provideBlock;
+            InfoLine.BlockProvider blockProvider = parser.getBlockProvider();
+            boolean provideBestWorld = parser.shouldBestWorld() || blockProvider != InfoLine.BlockProvider.EMPTY;
 
             Level level = provideBestWorld ? WorldUtils.getBestWorld(mc) : world;
 
             Pair<Entity, CompoundData> ent = switch (entityProvider)
             {
-                case EMPTY -> Pair.of(null, null);
+                case EMPTY -> EMPTY_ENTITY;
                 case CAMERA -> Pair.of(entity, null);
                 case MC_PLAYER -> Pair.of(mc.player, null);
                 case LOOKING -> this.getTargetEntity(world, mc);
@@ -700,7 +611,31 @@ public class RenderHandler implements IRenderer
                 return;
             }
 
-            InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), null, pos, null, chunkPos, ent.getRight());
+            Triple<BlockState, BlockEntity, CompoundData> block = switch (blockProvider)
+            {
+                case EMPTY -> EMPTY_BLOCK;
+                case STATE_ONLY ->
+                {
+                    BlockState blockState = this.getTargetedBlock(mc);
+
+                    if (blockState == null)
+                    {
+                        yield null;
+                    }
+
+                    yield Triple.of(blockState, null, null);
+                }
+                case WITH_BLOCK_ENTITY -> this.getTargetedBlockFullInfo(level, mc);
+            };
+
+            if (block == null)
+            {
+                return;
+            }
+
+            CompoundData compound = Optional.ofNullable(ent.getRight()).orElse(block.getRight());
+
+            InfoLineContext ctx = new InfoLineContext(level, ent.getLeft(), block.getMiddle(), pos, block.getLeft(), chunkPos, compound);
             this.processEntries(parser.parse(ctx));
 
             if (parser.succeededType())
@@ -857,7 +792,7 @@ public class RenderHandler implements IRenderer
             {
                 if (bestWorld instanceof ServerLevel)
                 {
-	                CompoundData data = new CompoundData();
+                    CompoundData data = new CompoundData();
                     BlockEntity be = bestWorld.getChunkAt(posLooking).getBlockEntity(posLooking);
                     pair = Pair.of(be, be != null ? DataConverterNbt.fromVanillaCompound(be.saveWithFullMetadata(bestWorld.registryAccess())) : data);
                 }
@@ -868,16 +803,62 @@ public class RenderHandler implements IRenderer
 
                 // Remember the last entity so the "refresh time" is smoothed over.
                 if (pair == null && this.lastBlockEntity != null &&
-                    this.lastBlockEntity.getLeft().getBlockPos().equals(posLooking))
+                    this.lastBlockEntity.getMiddle().getBlockPos().equals(posLooking))
                 {
-                    pair = this.lastBlockEntity;
+                    pair = Pair.of(this.lastBlockEntity.getMiddle(), this.lastBlockEntity.getRight());
                 }
                 else if (pair != null)
                 {
-                    this.lastBlockEntity = pair;
+                    this.lastBlockEntity = Triple.of(state, pair.getLeft(), pair.getRight());
                 }
 
                 return pair;
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public Triple<BlockState, BlockEntity, CompoundData> getTargetedBlockFullInfo(Level world, Minecraft mc)
+    {
+        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK)
+        {
+            BlockPos posLooking = ((BlockHitResult) mc.hitResult).getBlockPos();
+            Level bestWorld = WorldUtils.getBestWorld(mc);
+            BlockState state = bestWorld.getBlockState(posLooking);
+
+            if (state.getBlock() instanceof EntityBlock)
+            {
+                Triple<BlockState, BlockEntity, CompoundData> triple = null;
+
+                if (bestWorld instanceof ServerLevel)
+                {
+                    CompoundData data = new CompoundData();
+                    BlockEntity be = bestWorld.getChunkAt(posLooking).getBlockEntity(posLooking);
+                    triple = Triple.of(state, be, be != null ? DataConverterNbt.fromVanillaCompound(be.saveWithFullMetadata(bestWorld.registryAccess())) : data);
+                }
+                else
+                {
+                    Pair<BlockEntity, CompoundData> beAndData = EntitiesDataManager.getInstance().requestBlockEntity(world, posLooking);
+                    if (beAndData != null)
+                    {
+                        triple = Triple.of(state, beAndData.getLeft(), beAndData.getRight());
+                    }
+                }
+
+                // Remember the last entity so the "refresh time" is smoothed over.
+                if (triple == null && this.lastBlockEntity != null &&
+                    this.lastBlockEntity.getMiddle().getBlockPos().equals(posLooking))
+                {
+                    triple = this.lastBlockEntity;
+                }
+                else if (triple != null)
+                {
+                    this.lastBlockEntity = triple;
+                }
+
+                return triple;
             }
         }
 
